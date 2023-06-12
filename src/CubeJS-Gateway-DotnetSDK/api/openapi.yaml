@@ -1,0 +1,502 @@
+openapi: 3.0.0
+info:
+  description: Cube.js Swagger Schema
+  title: Cube.js
+  version: 1.0.0
+servers:
+- url: /
+security:
+- bearerAuth: []
+paths:
+  /v1/meta:
+    get:
+      description: ""
+      operationId: metaV1
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1MetaResponse'
+          description: successful operation
+        "4XX":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1Error'
+          description: Request could not be completed
+        "5XX":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1Error'
+          description: Internal Server Error
+      summary: Load Metadata
+  /v1/load:
+    post:
+      operationId: loadV1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/V1LoadRequest'
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1LoadResponse'
+          description: successful operation
+        "4XX":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1Error'
+          description: Request could not be completed
+        "5XX":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/V1Error'
+          description: Internal Server Error
+      summary: Load data via Cube JSON Query
+components:
+  schemas:
+    V1CubeMetaJoin:
+      example:
+        name: name
+        relationship: relationship
+      properties:
+        name:
+          type: string
+        relationship:
+          type: string
+      required:
+      - name
+      - relationship
+      type: object
+    V1CubeMetaSegment:
+      example:
+        name: name
+        shortTitle: shortTitle
+        title: title
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        shortTitle:
+          type: string
+      required:
+      - name
+      - shortTitle
+      - title
+      type: object
+    V1CubeMetaDimension:
+      example:
+        name: name
+        type: type
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+      required:
+      - name
+      - type
+      type: object
+    V1CubeMetaMeasure:
+      example:
+        name: name
+        aggType: aggType
+        title: title
+        type: type
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        aggType:
+          type: string
+      required:
+      - name
+      - type
+      type: object
+    V1CubeMeta:
+      example:
+        joins:
+        - name: name
+          relationship: relationship
+        - name: name
+          relationship: relationship
+        measures:
+        - name: name
+          aggType: aggType
+          title: title
+          type: type
+        - name: name
+          aggType: aggType
+          title: title
+          type: type
+        name: name
+        title: title
+        dimensions:
+        - name: name
+          type: type
+        - name: name
+          type: type
+        segments:
+        - name: name
+          shortTitle: shortTitle
+          title: title
+        - name: name
+          shortTitle: shortTitle
+          title: title
+      properties:
+        name:
+          type: string
+        title:
+          type: string
+        measures:
+          items:
+            $ref: '#/components/schemas/V1CubeMetaMeasure'
+          type: array
+        dimensions:
+          items:
+            $ref: '#/components/schemas/V1CubeMetaDimension'
+          type: array
+        segments:
+          items:
+            $ref: '#/components/schemas/V1CubeMetaSegment'
+          type: array
+        joins:
+          items:
+            $ref: '#/components/schemas/V1CubeMetaJoin'
+          type: array
+      required:
+      - dimensions
+      - measures
+      - name
+      - segments
+      type: object
+    V1MetaResponse:
+      example:
+        cubes:
+        - joins:
+          - name: name
+            relationship: relationship
+          - name: name
+            relationship: relationship
+          measures:
+          - name: name
+            aggType: aggType
+            title: title
+            type: type
+          - name: name
+            aggType: aggType
+            title: title
+            type: type
+          name: name
+          title: title
+          dimensions:
+          - name: name
+            type: type
+          - name: name
+            type: type
+          segments:
+          - name: name
+            shortTitle: shortTitle
+            title: title
+          - name: name
+            shortTitle: shortTitle
+            title: title
+        - joins:
+          - name: name
+            relationship: relationship
+          - name: name
+            relationship: relationship
+          measures:
+          - name: name
+            aggType: aggType
+            title: title
+            type: type
+          - name: name
+            aggType: aggType
+            title: title
+            type: type
+          name: name
+          title: title
+          dimensions:
+          - name: name
+            type: type
+          - name: name
+            type: type
+          segments:
+          - name: name
+            shortTitle: shortTitle
+            title: title
+          - name: name
+            shortTitle: shortTitle
+            title: title
+      properties:
+        cubes:
+          items:
+            $ref: '#/components/schemas/V1CubeMeta'
+          type: array
+      type: object
+    V1LoadResultAnnotation:
+      example:
+        measures: "{}"
+        timeDimensions: "{}"
+        dimensions: "{}"
+        segments: "{}"
+      properties:
+        measures:
+          type: object
+        dimensions:
+          type: object
+        segments:
+          type: object
+        timeDimensions:
+          type: object
+      required:
+      - dimensions
+      - measures
+      - segments
+      - timeDimensions
+      type: object
+    V1LoadResultData:
+      type: object
+    V1LoadResult:
+      example:
+        annotation:
+          measures: "{}"
+          timeDimensions: "{}"
+          dimensions: "{}"
+          segments: "{}"
+        refreshKeyValues:
+        - "{}"
+        - "{}"
+        data:
+        - null
+        - null
+        dataSource: dataSource
+      properties:
+        dataSource:
+          type: string
+        annotation:
+          $ref: '#/components/schemas/V1LoadResultAnnotation'
+        data:
+          items:
+            $ref: '#/components/schemas/V1LoadResultData'
+          type: array
+        refreshKeyValues:
+          items:
+            type: object
+          type: array
+      required:
+      - annotation
+      - data
+      type: object
+    V1Error:
+      properties:
+        error:
+          type: string
+      required:
+      - error
+      type: object
+    V1LoadResponse:
+      example:
+        pivotQuery: "{}"
+        slowQuery: true
+        results:
+        - annotation:
+            measures: "{}"
+            timeDimensions: "{}"
+            dimensions: "{}"
+            segments: "{}"
+          refreshKeyValues:
+          - "{}"
+          - "{}"
+          data:
+          - null
+          - null
+          dataSource: dataSource
+        - annotation:
+            measures: "{}"
+            timeDimensions: "{}"
+            dimensions: "{}"
+            segments: "{}"
+          refreshKeyValues:
+          - "{}"
+          - "{}"
+          data:
+          - null
+          - null
+          dataSource: dataSource
+        queryType: queryType
+      properties:
+        pivotQuery:
+          type: object
+        slowQuery:
+          type: boolean
+        queryType:
+          type: string
+        results:
+          items:
+            $ref: '#/components/schemas/V1LoadResult'
+          type: array
+      required:
+      - results
+      type: object
+    V1LoadRequestQueryFilterLogicalAnd:
+      properties:
+        and:
+          items:
+            type: object
+          type: array
+      type: object
+    V1LoadRequestQueryFilterLogicalOr:
+      properties:
+        or:
+          items:
+            type: object
+          type: array
+      type: object
+    V1LoadRequestQueryFilterBase:
+      properties:
+        member:
+          type: string
+        operator:
+          type: string
+        values:
+          items:
+            type: string
+          type: array
+      type: object
+    V1LoadRequestQueryTimeDimension:
+      example:
+        dateRange: "{}"
+        granularity: granularity
+        dimension: dimension
+      properties:
+        dimension:
+          type: string
+        granularity:
+          type: string
+        dateRange:
+          type: object
+      required:
+      - dimension
+      type: object
+    V1LoadRequestQueryFilterItem:
+      oneOf:
+      - $ref: '#/components/schemas/V1LoadRequestQueryFilterBase'
+      - $ref: '#/components/schemas/V1LoadRequestQueryFilterLogicalOr'
+      - $ref: '#/components/schemas/V1LoadRequestQueryFilterLogicalAnd'
+    V1LoadRequestQuery:
+      example:
+        measures:
+        - measures
+        - measures
+        offset: 6
+        timeDimensions:
+        - dateRange: "{}"
+          granularity: granularity
+          dimension: dimension
+        - dateRange: "{}"
+          granularity: granularity
+          dimension: dimension
+        limit: 0
+        filters:
+        - null
+        - null
+        dimensions:
+        - dimensions
+        - dimensions
+        segments:
+        - segments
+        - segments
+        order:
+        - - order
+          - order
+        - - order
+          - order
+      properties:
+        measures:
+          items:
+            type: string
+          type: array
+        dimensions:
+          items:
+            type: string
+          type: array
+        segments:
+          items:
+            type: string
+          type: array
+        timeDimensions:
+          items:
+            $ref: '#/components/schemas/V1LoadRequestQueryTimeDimension'
+          type: array
+        order:
+          items:
+            items:
+              type: string
+            type: array
+          type: array
+        limit:
+          format: int32
+          type: integer
+        offset:
+          format: int32
+          type: integer
+        filters:
+          items:
+            $ref: '#/components/schemas/V1LoadRequestQueryFilterItem'
+          type: array
+      type: object
+    V1LoadRequest:
+      example:
+        query:
+          measures:
+          - measures
+          - measures
+          offset: 6
+          timeDimensions:
+          - dateRange: "{}"
+            granularity: granularity
+            dimension: dimension
+          - dateRange: "{}"
+            granularity: granularity
+            dimension: dimension
+          limit: 0
+          filters:
+          - null
+          - null
+          dimensions:
+          - dimensions
+          - dimensions
+          segments:
+          - segments
+          - segments
+          order:
+          - - order
+            - order
+          - - order
+            - order
+        queryType: queryType
+      properties:
+        queryType:
+          type: string
+        query:
+          $ref: '#/components/schemas/V1LoadRequestQuery'
+      type: object
+  securitySchemes:
+    bearerAuth:
+      bearerFormat: JWT
+      scheme: bearer
+      type: http
+
